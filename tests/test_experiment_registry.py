@@ -1,4 +1,4 @@
-from genhack.experiments.registry import clear_registry, stage, list_stages, resolve_order
+from genhack.experiments.registry import clear_registry, list_stages, resolve_order, stage
 
 
 def test_register_and_order():

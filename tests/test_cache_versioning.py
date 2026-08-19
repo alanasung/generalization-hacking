@@ -104,9 +104,7 @@ class TestVersionPinning:
 
 
 class TestSafeNames:
-    @pytest.mark.parametrize(
-        "name", ["a", "rec0", "layer_12", "sample-001", "UPPER", "0", "x.y"]
-    )
+    @pytest.mark.parametrize("name", ["a", "rec0", "layer_12", "sample-001", "UPPER", "0", "x.y"])
     def test_accepts_ordinary_names(self, name):
         assert check_safe_name(name, "record id") == name
 

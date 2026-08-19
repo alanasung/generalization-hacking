@@ -142,8 +142,13 @@ def render(stats, grouped, metric: str, args: argparse.Namespace):
     if not stats:
         for axis, label in zip(axes, ("(a)", "(b)")):
             axis.text(
-                0.5, 0.5, "no measured results yet",
-                ha="center", va="center", transform=axis.transAxes, color="#666666",
+                0.5,
+                0.5,
+                "no measured results yet",
+                ha="center",
+                va="center",
+                transform=axis.transAxes,
+                color="#666666",
             )
             axis.set_xticks([])
             axis.set_yticks([])
@@ -162,8 +167,11 @@ def render(stats, grouped, metric: str, args: argparse.Namespace):
         for index, name in enumerate(names):
             values = grouped[name]
             right.scatter(
-                [index] * len(values), values, s=14,
-                color=PALETTE[index % len(PALETTE)], alpha=0.85,
+                [index] * len(values),
+                values,
+                s=14,
+                color=PALETTE[index % len(PALETTE)],
+                alpha=0.85,
             )
         right.set_xticks(range(len(names)))
         right.set_xticklabels(names, rotation=30)

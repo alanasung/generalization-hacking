@@ -97,9 +97,7 @@ class TestHandComputedMae:
     def test_full_mae_is_repeated_in_the_complementarity_block(self, report):
         assert report.complementarity["full_mae"] == pytest.approx(0.0)
 
-    @pytest.mark.parametrize(
-        ("name", "expected"), [("a", 0.24), ("b", 0.12), ("c", 0.24)]
-    )
+    @pytest.mark.parametrize(("name", "expected"), [("a", 0.24), ("b", 0.12), ("c", 0.24)])
     def test_solo_mae_is_hand_computed(self, report, name, expected):
         assert report.complementarity["solo_mae"][name] == pytest.approx(expected, abs=1e-6)
 

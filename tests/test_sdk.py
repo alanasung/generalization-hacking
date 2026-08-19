@@ -1,12 +1,16 @@
 """API-contract / SDK integrity tests."""
+
 from __future__ import annotations
+
 import importlib
 import pkgutil
-import inspect
+
 import genhack as pkg
+
 
 def test_version():
     assert hasattr(pkg, "__version__")
+
 
 _SHARED_TOP = {
     "ablation",
@@ -45,34 +49,47 @@ def test_all_submodules_import():
             failures.append(f"{mod.name}: {exc}")
     assert not failures, failures
 
+
 def test_public_evaluation_surface():
     from genhack import evaluation
+
     for name in ("accuracy", "auroc", "EvaluationHarness", "PredictFn"):
         assert hasattr(evaluation, name)
 
+
 def test_public_cache_surface():
     from genhack.cache import ArtifactCache
+
     assert callable(ArtifactCache)
+
 
 def test_reporting_surface():
     from genhack import reporting
+
     for name in ("aggregate_results", "write_tables", "write_figures"):
         assert hasattr(reporting, name)
 
+
 def test_hooks_surface():
     from genhack.models import hooks
+
     for name in ("capture", "steer", "ablate", "patch_activations", "intervene_attention_heads"):
         assert hasattr(hooks, name)
         assert callable(getattr(hooks, name))
 
+
 def test_generation_chat_helper():
     from genhack.models.generation import apply_chat_template
+
     assert callable(apply_chat_template)
+
 
 def test_registry_has_revision():
     from genhack.models.registry import smallest
+
     spec = smallest()
     assert getattr(spec, "revision", None)
+
 
 def test_no_print_in_library():
     import pathlib

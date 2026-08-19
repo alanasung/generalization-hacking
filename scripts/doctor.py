@@ -27,8 +27,14 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 WATCHED_PACKAGES = (
-    "torch", "transformers", "numpy", "pandas", "scikit-learn",
-    "hydra-core", "omegaconf", "matplotlib",
+    "torch",
+    "transformers",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "hydra-core",
+    "omegaconf",
+    "matplotlib",
 )
 
 
@@ -36,10 +42,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Report resolved device, dtype, and environment.")
     parser.add_argument("--preset", default=None, help="Resolve against this experiment preset.")
     parser.add_argument(
-        "-o", "--override", action="append", default=[], metavar="KEY=VALUE",
+        "-o",
+        "--override",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
         help="Hydra-style override; repeatable.",
     )
-    parser.add_argument("--json", action="store_true", dest="as_json", help="Machine-readable output.")
+    parser.add_argument(
+        "--json", action="store_true", dest="as_json", help="Machine-readable output."
+    )
     return parser
 
 
@@ -120,8 +132,12 @@ def main(argv: list[str] | None = None) -> int:
             "available_presets": available_presets(),
         },
         "disk": disk_report(
-            [REPO_ROOT / str(cfg.paths.data), REPO_ROOT / str(cfg.paths.cache),
-             REPO_ROOT / str(cfg.paths.runs), REPO_ROOT / str(cfg.paths.results)]
+            [
+                REPO_ROOT / str(cfg.paths.data),
+                REPO_ROOT / str(cfg.paths.cache),
+                REPO_ROOT / str(cfg.paths.runs),
+                REPO_ROOT / str(cfg.paths.results),
+            ]
         ),
     }
 
@@ -138,9 +154,11 @@ def main(argv: list[str] | None = None) -> int:
     print("\n== resolved for this config ==")
     print(f"  device     {device.device}")
     print(f"  dtype      {device.dtype}")
-    print(f"  memory     {device.available_memory_gb:.1f} GiB free "
-          f"of {device.total_memory_gb:.1f} GiB"
-          f"{' unified' if device.unified_memory else ''}")
+    print(
+        f"  memory     {device.available_memory_gb:.1f} GiB free "
+        f"of {device.total_memory_gb:.1f} GiB"
+        f"{' unified' if device.unified_memory else ''}"
+    )
     print(f"  budget     {cfg.run.max_memory_gb} GiB (run.max_memory_gb)")
     for note in device.notes:
         print(f"  note       {note}")

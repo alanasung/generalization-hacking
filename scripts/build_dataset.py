@@ -37,9 +37,15 @@ DIFFICULTIES = ("easy", "medium", "hard")
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Build the configured item set.")
-    parser.add_argument("--preset", default=None, help="Experiment preset to read data config from.")
     parser.add_argument(
-        "-o", "--override", action="append", default=[], metavar="KEY=VALUE",
+        "--preset", default=None, help="Experiment preset to read data config from."
+    )
+    parser.add_argument(
+        "-o",
+        "--override",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
         help="Hydra-style override; repeatable.",
     )
     parser.add_argument("--out", default=None, help="Output directory. Defaults to <data>/<name>.")
@@ -63,7 +69,9 @@ def assign_splits(n: int, fracs: tuple[float, float, float], seed: int, shuffle:
     return labels
 
 
-def build_synthetic(n_items: int, seed: int, splits: list[str], max_prompt_tokens: int) -> list[dict]:
+def build_synthetic(
+    n_items: int, seed: int, splits: list[str], max_prompt_tokens: int
+) -> list[dict]:
     """Items with planted structure, for plumbing and instrument checks only.
 
     ``target`` is the continuous quantity, ``gate`` the binary decision derived
@@ -76,8 +84,10 @@ def build_synthetic(n_items: int, seed: int, splits: list[str], max_prompt_token
     for index in range(n_items):
         target = float(rng.uniform(0.0, 1.0))
         margin = abs(target - 0.5)
-        difficulty = DIFFICULTIES[0] if margin > 0.33 else (
-            DIFFICULTIES[1] if margin > 0.15 else DIFFICULTIES[2]
+        difficulty = (
+            DIFFICULTIES[0]
+            if margin > 0.33
+            else (DIFFICULTIES[1] if margin > 0.15 else DIFFICULTIES[2])
         )
         family = TEMPLATE_FAMILIES[index % len(TEMPLATE_FAMILIES)]
         items.append(
@@ -85,8 +95,7 @@ def build_synthetic(n_items: int, seed: int, splits: list[str], max_prompt_token
                 "id": f"syn-{index:05d}",
                 "split": splits[index],
                 "prompt": (
-                    f"[{family}] Synthetic item {index}. "
-                    f"Respond with a value in [0, 1]."
+                    f"[{family}] Synthetic item {index}. " f"Respond with a value in [0, 1]."
                 )[: max_prompt_tokens * 4],
                 "target": round(target, 6),
                 "gate": bool(target >= 0.5),

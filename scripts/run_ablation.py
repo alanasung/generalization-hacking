@@ -32,23 +32,34 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run configured ablation arms across seeds.")
     parser.add_argument("--preset", required=True, help="Experiment preset defining the ablation.")
     parser.add_argument(
-        "--arms", nargs="*", default=None,
+        "--arms",
+        nargs="*",
+        default=None,
         help="Subset of ablation.enabled to run. Defaults to all of them.",
     )
     parser.add_argument(
-        "--seeds", type=int, default=None,
+        "--seeds",
+        type=int,
+        default=None,
         help="Number of seeds per arm, overriding ablation.n_seeds.",
     )
     parser.add_argument(
-        "-o", "--override", action="append", default=[], metavar="KEY=VALUE",
+        "-o",
+        "--override",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
         help="Extra Hydra override applied to every arm; repeatable.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print the plan and exit.")
     parser.add_argument(
-        "--keep-going", action="store_true", help="Continue past a failing arm.",
+        "--keep-going",
+        action="store_true",
+        help="Continue past a failing arm.",
     )
     parser.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Manifest path. Defaults to <results>/ablations/<preset>.json.",
     )
     return parser

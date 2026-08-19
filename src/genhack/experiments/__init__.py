@@ -1,25 +1,29 @@
-"""Experiment stage registry and topological scheduling."""
+"""Experiment stage registry and dependency-ordered execution planning."""
 
 from __future__ import annotations
 
 from .registry import (
-    Stage,
-    StageFn,
+    CyclicDependencyError,
+    DuplicateStageError,
+    StageError,
+    StageSpec,
+    UnknownStageError,
     clear_registry,
     get_stage,
     list_stages,
-    order_stages,
-    register,
-    run_stage,
+    resolve_order,
+    stage,
 )
 
 __all__ = [
-    "Stage",
-    "StageFn",
+    "CyclicDependencyError",
+    "DuplicateStageError",
+    "StageError",
+    "StageSpec",
+    "UnknownStageError",
     "clear_registry",
     "get_stage",
     "list_stages",
-    "order_stages",
-    "register",
-    "run_stage",
+    "resolve_order",
+    "stage",
 ]

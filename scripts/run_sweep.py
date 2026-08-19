@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import argparse
 import itertools
-import json
 import subprocess
 import sys
 import time
@@ -35,20 +34,28 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Expand and execute a configured sweep.")
     parser.add_argument("--preset", required=True, help="Experiment preset defining the sweep.")
     parser.add_argument(
-        "-o", "--override", action="append", default=[], metavar="KEY=VALUE",
+        "-o",
+        "--override",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
         help="Extra Hydra override applied to every cell; repeatable.",
     )
     parser.add_argument(
-        "--max-cells", type=int, default=None,
+        "--max-cells",
+        type=int,
+        default=None,
         help="Cap the number of cells, overriding sweep.max_cells.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print the plan and exit.")
     parser.add_argument(
-        "--keep-going", action="store_true",
+        "--keep-going",
+        action="store_true",
         help="Continue after a failing cell instead of stopping at the first one.",
     )
     parser.add_argument(
-        "--out", default=None,
+        "--out",
+        default=None,
         help="Where to write the sweep manifest. Defaults to <results>/sweeps/<preset>.json.",
     )
     return parser
@@ -61,7 +68,7 @@ def format_override(key: str, value: object) -> str:
     has to be quoted or the shell-free ``subprocess`` call still confuses Hydra's
     parser.
     """
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, list | tuple):
         inner = ",".join(str(item) for item in value)
         return f"{key}=[{inner}]"
     text = str(value)
@@ -94,7 +101,7 @@ def expand_grid(grid: dict, seeds: list[int]) -> list[dict]:
 
 
 def _slug(value: object) -> str:
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, list | tuple):
         return "-".join(str(item) for item in value)
     return str(value).replace("/", "-")
 
@@ -140,7 +147,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"grid expands to {len(cells)} cells; truncating to max_cells={limit}")
         cells = cells[:limit]
 
-    print(f"sweep {args.preset}: {len(cells)} cells over grid keys {sorted(grid)} and seeds {seeds}")
+    print(
+        f"sweep {args.preset}: {len(cells)} cells over grid keys {sorted(grid)} and seeds {seeds}"
+    )
     for cell in cells:
         print(f"  {cell['id']:40s} {' '.join(cell['overrides'])}")
     if args.dry_run:

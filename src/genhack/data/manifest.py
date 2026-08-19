@@ -44,9 +44,7 @@ class DatasetManifest:
     val_frac: float = 0.2
     test_frac: float = 0.2
     is_synthetic: bool = True
-    created_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
-    )
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     notes: list[str] = field(default_factory=list)
     items: list[ItemRecord] = field(default_factory=list)
     extra: dict[str, Any] = field(default_factory=dict)

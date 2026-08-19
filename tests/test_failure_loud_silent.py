@@ -40,9 +40,7 @@ class TestCategories:
 class TestClassifyTaxonomy:
     def test_exact_predictions_are_correct(self):
         target = np.array([0.2, 0.8])
-        cats = classify_taxonomy(
-            target, target, target >= 0.5, threshold=0.5, tolerance=0.1
-        )
+        cats = classify_taxonomy(target, target, target >= 0.5, threshold=0.5, tolerance=0.1)
         assert list(cats) == ["correct", "correct"]
 
     def test_a_small_error_on_the_right_side_is_correct(self):

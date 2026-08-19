@@ -33,12 +33,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", default=None, help="Cache root. Defaults to paths.cache.")
     parser.add_argument("--namespace", default=None, help="Restrict to one namespace.")
     parser.add_argument(
-        "--verify", action="store_true",
+        "--verify",
+        action="store_true",
         help="Read every record back and report unreadable or unlisted entries.",
     )
-    parser.add_argument("--json", action="store_true", dest="as_json", help="Machine-readable output.")
     parser.add_argument(
-        "-o", "--override", action="append", default=[], metavar="KEY=VALUE",
+        "--json", action="store_true", dest="as_json", help="Machine-readable output."
+    )
+    parser.add_argument(
+        "-o",
+        "--override",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
         help="Hydra-style override used when reading paths.cache; repeatable.",
     )
     return parser

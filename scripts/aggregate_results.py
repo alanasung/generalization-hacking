@@ -31,28 +31,45 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED_FIELDS = ("task", "seed", "git_sha")
 PROVENANCE_FIELDS = (
-    "task", "seed", "git_sha", "git_dirty", "profile", "model", "created_at", "n",
-    "n_dropped", "dropped_reason", "is_synthetic", "notes", "inputs",
+    "task",
+    "seed",
+    "git_sha",
+    "git_dirty",
+    "profile",
+    "model",
+    "created_at",
+    "n",
+    "n_dropped",
+    "dropped_reason",
+    "is_synthetic",
+    "notes",
+    "inputs",
 )
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Aggregate result JSONs into one payload.")
     parser.add_argument(
-        "--search", nargs="*", default=["results", "runs"],
+        "--search",
+        nargs="*",
+        default=["results", "runs"],
         help="Directories to walk for result JSONs.",
     )
     parser.add_argument(
-        "--pattern", default="*.json", help="Glob applied within each search directory.",
+        "--pattern",
+        default="*.json",
+        help="Glob applied within each search directory.",
     )
     parser.add_argument("--out", default="results/results.json", help="Aggregate output path.")
     parser.add_argument(
-        "--include-synthetic", action="store_true",
+        "--include-synthetic",
+        action="store_true",
         help="Also emit synthetic rows in the measured list. Off by default, and it "
-             "should stay off for anything that becomes a reported table.",
+        "should stay off for anything that becomes a reported table.",
     )
     parser.add_argument(
-        "--strict", action="store_true",
+        "--strict",
+        action="store_true",
         help="Exit non-zero if any candidate file failed the provenance check.",
     )
     return parser
@@ -71,7 +88,7 @@ def flatten_metrics(payload: dict, prefix: str = "") -> dict[str, float]:
             flat.update(flatten_metrics(value, prefix=f"{name}."))
         elif isinstance(value, bool):
             continue
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, int | float):
             flat[name] = float(value)
     return flat
 
@@ -139,10 +156,14 @@ def main(argv: list[str] | None = None) -> int:
     try:
         from genhack.reporting.aggregate import aggregate_results, write_aggregate
 
-        payload = aggregate_results(search, pattern=args.pattern, include_synthetic=args.include_synthetic)
+        payload = aggregate_results(
+            search, pattern=args.pattern, include_synthetic=args.include_synthetic
+        )
         out = Path(args.out) if Path(args.out).is_absolute() else REPO_ROOT / args.out
         write_aggregate(payload, out)
-        print(f"measured results : {payload.n_measured if hasattr(payload,'n_measured') else len(payload.measured)}")
+        print(
+            f"measured results : {payload.n_measured if hasattr(payload,'n_measured') else len(payload.measured)}"
+        )
         print(f"synthetic results: {len(payload.synthetic)} (kept separate; not reportable)")
         print(f"unusable files   : {len(payload.warnings)}")
         print(f"wrote {out} via genhack.reporting.aggregate")

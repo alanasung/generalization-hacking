@@ -103,6 +103,4 @@ def available_presets(*, config_dir: Path | None = None) -> list[str]:
     directory = (Path(config_dir) if config_dir else CONFIG_DIR) / "experiment"
     if not directory.is_dir():
         return []
-    return sorted(
-        path.stem for path in directory.glob("*.yaml") if path.stem != "base_experiment"
-    )
+    return sorted(path.stem for path in directory.glob("*.yaml") if path.stem != "base_experiment")

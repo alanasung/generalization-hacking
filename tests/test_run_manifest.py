@@ -134,9 +134,7 @@ class TestRunMetadata:
         record = RunMetadata("s", 0, "pilot", "abc", "main", False)
         datetime.fromisoformat(record.created_at)
 
-    @pytest.mark.parametrize(
-        "field", ["hardware", "packages", "determinism", "extra"]
-    )
+    @pytest.mark.parametrize("field", ["hardware", "packages", "determinism", "extra"])
     def test_optional_dict_fields_default_to_empty(self, field):
         record = RunMetadata("s", 0, "pilot", "abc", "main", False)
         assert getattr(record, field) == {}

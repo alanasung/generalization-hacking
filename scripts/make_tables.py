@@ -36,17 +36,22 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--in", dest="source", default="results/results.json")
     parser.add_argument("--out-dir", default="results/tables")
     parser.add_argument(
-        "--metrics", nargs="*", default=None,
+        "--metrics",
+        nargs="*",
+        default=None,
         help="Metric columns to include, in order. Defaults to every metric present.",
     )
     parser.add_argument(
-        "--group-by", default="task",
+        "--group-by",
+        default="task",
         help="Provenance column used as the row label.",
     )
     parser.add_argument("--lower-is-better", nargs="*", default=None)
     parser.add_argument("--precision", type=int, default=4)
     parser.add_argument(
-        "--min-n", type=int, default=20,
+        "--min-n",
+        type=int,
+        default=20,
         help="Rows with fewer examples than this are footnoted as small strata.",
     )
     parser.add_argument("--caption", default="Results. No measured numbers yet.")
@@ -66,8 +71,8 @@ def row_n(row: dict) -> int:
     """Total example count for a row, however the payload spelled it."""
     value = row.get("n")
     if isinstance(value, dict):
-        return int(sum(int(item) for item in value.values() if isinstance(item, (int, float))))
-    return int(value) if isinstance(value, (int, float)) else 0
+        return int(sum(int(item) for item in value.values() if isinstance(item, int | float)))
+    return int(value) if isinstance(value, int | float) else 0
 
 
 def collect_metrics(rows: list[dict], requested: list[str] | None) -> list[str]:
@@ -88,8 +93,14 @@ def fmt(value: object, precision: int) -> str:
 
 
 def markdown_table(rows: list[dict], metrics: list[str], args: argparse.Namespace) -> str:
-    arrows = {name: ("(lower better)" if direction(name, args.lower_is_better) == "down"
-                     else "(higher better)") for name in metrics}
+    arrows = {
+        name: (
+            "(lower better)"
+            if direction(name, args.lower_is_better) == "down"
+            else "(higher better)"
+        )
+        for name in metrics
+    }
     header = [args.group_by, "seed", "n", *[f"{name} {arrows[name]}" for name in metrics]]
     align = ["---", "---:", "---:", *["---:"] * len(metrics)]
 
@@ -117,7 +128,9 @@ def markdown_table(rows: list[dict], metrics: list[str], args: argparse.Namespac
 
 def latex_table(rows: list[dict], metrics: list[str], args: argparse.Namespace) -> str:
     arrows = {
-        name: (r"$\downarrow$" if direction(name, args.lower_is_better) == "down" else r"$\uparrow$")
+        name: (
+            r"$\downarrow$" if direction(name, args.lower_is_better) == "down" else r"$\uparrow$"
+        )
         for name in metrics
     }
     columns = "l" + "r" * (2 + len(metrics))

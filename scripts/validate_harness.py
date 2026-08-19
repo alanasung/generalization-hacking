@@ -44,16 +44,22 @@ def build_parser() -> argparse.ArgumentParser:
         description="Recovery-rate check of the failure harness on planted synthetic data.",
     )
     parser.add_argument(
-        "--seeds", type=int, default=12,
+        "--seeds",
+        type=int,
+        default=12,
         help="Number of seeds. Ten is the floor; fewer cannot express a rate.",
     )
     parser.add_argument("--n-items", type=int, default=256, help="Synthetic examples per seed.")
     parser.add_argument(
-        "--min-recovery", type=float, default=0.9,
+        "--min-recovery",
+        type=float,
+        default=0.9,
         help="Recovery rate below which this script exits non-zero.",
     )
     parser.add_argument(
-        "--extra-components", type=int, default=1,
+        "--extra-components",
+        type=int,
+        default=1,
         help="Inert decoy components added in the generalization arm.",
     )
     parser.add_argument("--out", default=None, help="Where to write the result JSON.")

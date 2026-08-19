@@ -4,14 +4,21 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from ..utils.git import git_sha
-from ..utils.io import atomic_write_json
+from ..utils.io import save_json
 
-__all__ = ["AggregatePayload", "aggregate_results", "flatten_metrics", "REQUIRED_FIELDS"]
+__all__ = [
+    "AggregatePayload",
+    "REQUIRED_FIELDS",
+    "aggregate_results",
+    "flatten_metrics",
+    "write_aggregate",
+]
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +54,7 @@ def flatten_metrics(payload: dict[str, Any], prefix: str = "") -> dict[str, floa
             flat.update(flatten_metrics(value, prefix=f"{name}."))
         elif isinstance(value, bool):
             continue
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, int | float):
             flat[name] = float(value)
     return flat
 
@@ -97,11 +104,27 @@ def aggregate_results(
                 "is_synthetic": bool(payload.get("is_synthetic", False)),
                 "n": payload.get("n"),
                 "metrics": flatten_metrics(
-                    {k: v for k, v in payload.items() if k not in {
-                        "task", "seed", "git_sha", "git_dirty", "profile", "model",
-                        "created_at", "n", "n_dropped", "dropped_reason", "is_synthetic",
-                        "notes", "inputs", "path",
-                    }}
+                    {
+                        k: v
+                        for k, v in payload.items()
+                        if k
+                        not in {
+                            "task",
+                            "seed",
+                            "git_sha",
+                            "git_dirty",
+                            "profile",
+                            "model",
+                            "created_at",
+                            "n",
+                            "n_dropped",
+                            "dropped_reason",
+                            "is_synthetic",
+                            "notes",
+                            "inputs",
+                            "path",
+                        }
+                    }
                 ),
                 "raw": payload,
             }
@@ -116,5 +139,5 @@ def aggregate_results(
 
 def write_aggregate(payload: AggregatePayload, dest: Path) -> Path:
     """Atomic write of the aggregate payload."""
-    atomic_write_json(dest, payload.to_dict())
+    save_json(dest, payload.to_dict())
     return dest

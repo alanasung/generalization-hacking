@@ -19,8 +19,9 @@ in a different experiment.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable, Iterator, Sequence
 from contextlib import contextmanager
-from typing import Any, Callable, Iterator, Sequence
+from typing import Any
 
 import numpy as np
 import torch
@@ -69,7 +70,7 @@ def resolve_layers(model: nn.Module) -> list[nn.Module]:
     """
     for path in _LAYER_PATHS:
         found = _lookup(model, path)
-        if isinstance(found, (nn.ModuleList, nn.Sequential)) and len(found) > 0:
+        if isinstance(found, nn.ModuleList | nn.Sequential) and len(found) > 0:
             return list(found)
     raise AttributeError(
         f"cannot locate transformer blocks on {type(model).__name__}: none of "
@@ -435,7 +436,9 @@ def intervene_attention_heads(
                 edited[:, head, :, :] = replacement
         elif replacement.ndim == 3:
             for i, head in enumerate(heads):
-                edited[:, head, :, :] = replacement[i] if replacement.shape[0] == len(heads) else replacement[0]
+                edited[:, head, :, :] = (
+                    replacement[i] if replacement.shape[0] == len(heads) else replacement[0]
+                )
         else:
             raise ValueError(
                 f"pattern must be 2-D [q,k] or 3-D [heads,q,k], got {tuple(replacement.shape)}"

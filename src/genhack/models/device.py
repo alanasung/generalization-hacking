@@ -257,7 +257,9 @@ def get_device(cfg: Any = None) -> DeviceInfo:
     )
 
 
-def guard_memory(required_gb: float, *, device: str | None = None, headroom_gb: float = 2.0) -> None:
+def guard_memory(
+    required_gb: float, *, device: str | None = None, headroom_gb: float = 2.0
+) -> None:
     """Refuse to start work that will not fit, before it starts.
 
     On unified-memory machines an over-large allocation does not fail cleanly;

@@ -9,7 +9,8 @@ ablation surface and with aggregation.
 from __future__ import annotations
 
 import time
-from typing import Any, Callable, Sequence
+from collections.abc import Callable, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -53,9 +54,7 @@ def run_control_arms(
         y = np.asarray(labels_or_scores, dtype=float).reshape(-1)
         require_non_empty(y, "labels")
         if features.shape[0] != y.size:
-            raise ValueError(
-                f"features rows {features.shape[0]} != labels length {y.size}"
-            )
+            raise ValueError(f"features rows {features.shape[0]} != labels length {y.size}")
         scores = np.asarray(predict_fn(features), dtype=float).reshape(-1)
         if scores.size != y.size:
             raise ValueError(f"predict_fn returned {scores.size} scores for {y.size} labels")

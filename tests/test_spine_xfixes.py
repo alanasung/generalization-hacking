@@ -137,9 +137,9 @@ def test_data_split_and_manifest(tmp_path):
     from genhack.data import (
         DatasetManifest,
         build_synthetic_items,
+        load_manifest,
         split_items,
         write_manifest,
-        load_manifest,
     )
 
     items = build_synthetic_items(64, seed=1)

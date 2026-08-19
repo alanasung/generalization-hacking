@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import statistics
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
-
-from ..utils.io import atomic_write_text
+from typing import Any
 
 __all__ = ["write_tables", "direction_arrow"]
 
@@ -17,6 +16,11 @@ def direction_arrow(metric: str, lower_is_better: Sequence[str] | None = None) -
     if lower_is_better is not None:
         return r"$\downarrow$" if metric in lower_is_better else r"$\uparrow$"
     return r"$\downarrow$" if any(h in metric.lower() for h in LOWER_HINTS) else r"$\uparrow$"
+
+
+def _write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
 def _cell(values: list[float], precision: int) -> str:
@@ -44,12 +48,12 @@ def write_tables(
     if not measured:
         md = out_dir / "results.md"
         tex = out_dir / "results.tex"
-        atomic_write_text(md, "_No measured results yet._\n")
-        atomic_write_text(
+        _write_text(md, "_No measured results yet._\n")
+        _write_text(
             tex,
             "\\begin{table}[t]\n\\centering\n"
             f"\\caption{{{caption}}}\n\\label{{{label}}}\n"
-            "\\begin{tabular}{l}\n\\toprule\nNo measured results yet.\\\n"
+            "\\begin{tabular}{l}\n\\toprule\nNo measured results yet.\\\\\n"
             "\\bottomrule\n\\end{tabular}\n\\end{table}\n",
         )
         return {"markdown": md, "latex": tex}
@@ -79,11 +83,9 @@ def write_tables(
         f"\\begin{{tabular}}{{{tex_cols}}}",
         "\\toprule",
         " & ".join(
-            [group_by]
-            + [f"{c} {direction_arrow(c, lower_is_better)}" for c in cols]
-            + ["n"]
+            [group_by] + [f"{c} {direction_arrow(c, lower_is_better)}" for c in cols] + ["n"]
         )
-        + " \\",
+        + " \\\\",
         "\\midrule",
     ]
     footnotes = False
@@ -103,13 +105,13 @@ def write_tables(
         cells_md.append(str(n))
         cells_tex.append(str(n))
         md_lines.append("| " + " | ".join(cells_md) + " |")
-        tex_lines.append(" & ".join(cells_tex) + " \\")
+        tex_lines.append(" & ".join(cells_tex) + " \\\\")
     tex_lines += ["\\bottomrule", "\\end{tabular}", "\\end{table}", ""]
     if footnotes:
         md_lines.append("")
-        md_lines.append(f"\*{min_n}: stratum smaller than min-n={min_n}.")
+        md_lines.append(f"\\*{min_n}: stratum smaller than min-n={min_n}.")
     md_path = out_dir / "results.md"
     tex_path = out_dir / "results.tex"
-    atomic_write_text(md_path, "\n".join(md_lines) + "\n")
-    atomic_write_text(tex_path, "\n".join(tex_lines))
+    _write_text(md_path, "\n".join(md_lines) + "\n")
+    _write_text(tex_path, "\n".join(tex_lines))
     return {"markdown": md_path, "latex": tex_path}

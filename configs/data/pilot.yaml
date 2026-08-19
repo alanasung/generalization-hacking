@@ -1,5 +1,9 @@
 # The real item set at pilot size. Small enough to finish locally, large enough
-# that a bootstrap interval is meaningful rather than decorative.
+# that a bootstrap interval is meaningful rather than decorative. 512 items
+# comfortably clears the >=256 floor: with five shortcut strategies, one
+# holdout family reserved per strategy, and a third of every seen family's
+# test bucket carved into the cue-decoupled stricter probe, that leaves enough
+# seen-family items per strategy for a stable fit.
 name: pilot
 n_items: 512
 seed: 0
@@ -8,3 +12,6 @@ val_frac: 0.2
 test_frac: 0.2
 shuffle: true
 max_prompt_tokens: 512
+# Domain corpus keys consumed by genhack.genhack.corpora.build_corpus.
+strategies: [lexical_overlap, position_bias, length_heuristic, template_marker, surface_ngram]
+holdout_families: [billing_disputes, lab_reports, vehicle_listings, escalation_queue, audit_trails]

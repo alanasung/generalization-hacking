@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
-
-from ..utils.io import atomic_write_text
+from typing import Any
 
 __all__ = ["PALETTE", "RC_PARAMS", "write_caption", "write_figures"]
 
@@ -111,6 +110,6 @@ def write_figures(
 
     caption = write_caption(metric, means)
     cap_path = out_dir / f"{metric}_by_{group_by}.caption.txt"
-    atomic_write_text(cap_path, caption + "\n")
+    cap_path.write_text(caption + "\n", encoding="utf-8")
     written["caption"] = cap_path
     return written

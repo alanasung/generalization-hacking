@@ -1,7 +1,8 @@
-"""Research library for __SLUG__ (token substituted only in repo-level docs).
+"""Shared research library spine.
 
 Library code is print-free, argparse-free, and importable. All CLI surfaces live
-under ``scripts/``.
+under ``scripts/``. Package contents are copied verbatim into each project's
+``src/<package>/`` tree by the scaffold.
 """
 
 from __future__ import annotations

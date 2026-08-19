@@ -17,7 +17,8 @@ assignment rather than as a separate statement.
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence, Sized, TypeVar
+from collections.abc import Iterable, Sequence, Sized
+from typing import TypeVar, cast
 
 __all__ = [
     "require_in_range",
@@ -137,7 +138,7 @@ def require_non_empty(value: T, name: str) -> T:
             f"{name} is empty; this usually means an upstream filter matched nothing, "
             "so check the selection criteria rather than the consumer"
         )
-    return value
+    return cast(T, value)
 
 
 def require_subset(values: Iterable[str], allowed: Iterable[str], name: str) -> list[str]:
@@ -158,7 +159,9 @@ def require_subset(values: Iterable[str], allowed: Iterable[str], name: str) -> 
     return requested
 
 
-def validate_layers(layers: Iterable[int], n_layers: int, *, name: str = "eval.layers") -> list[int]:
+def validate_layers(
+    layers: Iterable[int], n_layers: int, *, name: str = "eval.layers"
+) -> list[int]:
     """Validate configured layer indices against a loaded model's depth.
 
     GPT-2 has 12 layers indexed ``0..11``; a default that includes ``12`` is a

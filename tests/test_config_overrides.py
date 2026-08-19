@@ -75,9 +75,7 @@ class TestMultipleOverrides:
 
 
 class TestRejectedOverrides:
-    @pytest.mark.parametrize(
-        "override", ["model.dtpye=float16", "run.sed=1", "nonexistent.key=1"]
-    )
+    @pytest.mark.parametrize("override", ["model.dtpye=float16", "run.sed=1", "nonexistent.key=1"])
     def test_misspelled_keys_are_rejected_at_compose_time(self, compose, override):
         with pytest.raises(Exception) as excinfo:
             compose([override])

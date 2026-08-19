@@ -21,8 +21,9 @@ parameters, which would otherwise warn on every call.
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import Any
 
 import torch
 
@@ -78,9 +79,7 @@ def apply_chat_template(
         if system:
             messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": prompt})
-        formatted.append(
-            formatter(messages, tokenize=False, add_generation_prompt=True)
-        )
+        formatted.append(formatter(messages, tokenize=False, add_generation_prompt=True))
     return formatted, "chat_template"
 
 

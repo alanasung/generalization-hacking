@@ -18,8 +18,8 @@ against a four-row example, and the tests do exactly that.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Callable, Sequence
 
 import numpy as np
 
@@ -312,7 +312,6 @@ def f1(
     return 0.0 if denominator == 0.0 else 2.0 * true_pos / denominator
 
 
-
 def minimum_detectable_effect(
     n: int,
     *,
@@ -330,11 +329,10 @@ def minimum_detectable_effect(
     require_in_range(alpha, "alpha", low=0.0, high=1.0, inclusive=False)
     require_in_range(power, "power", low=0.0, high=1.0, inclusive=False)
     # Normal approximations: z_{1-a/2} + z_{power}
-    from math import ceil
     # Rough constants: 1.96 for 0.05 two-sided, 0.84 for 80% power
     z_alpha = 1.959963984540054
     z_power = 0.8416212335729143 if abs(power - 0.8) < 1e-9 else 1.2815515655446004
-    return float(sigma * (z_alpha + z_power) / (n ** 0.5))
+    return float(sigma * (z_alpha + z_power) / (n**0.5))
 
 
 def tost_equivalence(
@@ -356,7 +354,9 @@ def tost_equivalence(
     est = bootstrap_mean(values, n_boot=n_boot, alpha=alpha * 2, seed=seed)
     # TOST: reject H0_lower (mean <= low) and H0_upper (mean >= high)
     equivalent = est.lo > low and est.hi < high
-    mde = minimum_detectable_effect(est.n, alpha=alpha, sigma=float(np.std(_as_1d(values, "values"), ddof=1) or 1.0))
+    mde = minimum_detectable_effect(
+        est.n, alpha=alpha, sigma=float(np.std(_as_1d(values, "values"), ddof=1) or 1.0)
+    )
     return {
         "equivalent": equivalent,
         "estimate": est.to_dict(),

@@ -188,9 +188,7 @@ def analyze_component_failure(
     target_arr = np.asarray(target, dtype=float)
     gate_arr = np.asarray(gate_true, dtype=bool)
     if target_arr.shape != gate_arr.shape:
-        raise ValueError(
-            f"target and gate_true disagree: {target_arr.shape} vs {gate_arr.shape}"
-        )
+        raise ValueError(f"target and gate_true disagree: {target_arr.shape} vs {gate_arr.shape}")
     n = int(target_arr.size)
     everything = frozenset(components)
 

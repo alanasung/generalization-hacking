@@ -9,7 +9,8 @@ a live model, a cache, or a synthetic oracle.
 from __future__ import annotations
 
 import time
-from typing import Any, Callable, Sequence
+from collections.abc import Callable, Sequence
+from typing import Any, cast
 
 import numpy as np
 
@@ -42,15 +43,15 @@ def run_component_dropout(
     predict_fn: PredictFn
     labels: Sequence[float] | np.ndarray
     if callable(predict_fn_or_labels):
-        predict_fn = predict_fn_or_labels  # type: ignore[assignment]
+        predict_fn = predict_fn_or_labels
         if labels_or_predict_fn is None:
             raise ValueError("labels are required")
-        labels = labels_or_predict_fn  # type: ignore[assignment]
+        labels = cast(Sequence[float] | np.ndarray, labels_or_predict_fn)
     else:
-        labels = predict_fn_or_labels  # type: ignore[assignment]
+        labels = cast(Sequence[float] | np.ndarray, predict_fn_or_labels)
         if not callable(labels_or_predict_fn):
             raise ValueError("predict_fn must be callable")
-        predict_fn = labels_or_predict_fn  # type: ignore[assignment]
+        predict_fn = labels_or_predict_fn
 
     y = np.asarray(labels, dtype=float).reshape(-1)
     require_non_empty(y, "labels")
@@ -59,9 +60,7 @@ def run_component_dropout(
     full = frozenset(names)
     full_scores = np.asarray(predict_fn(full), dtype=float).reshape(-1)
     if full_scores.size != y.size:
-        raise ValueError(
-            f"predict_fn(full) returned {full_scores.size} scores for {y.size} labels"
-        )
+        raise ValueError(f"predict_fn(full) returned {full_scores.size} scores for {y.size} labels")
 
     def _acc(scores: np.ndarray) -> float:
         return float(np.mean((scores >= threshold).astype(int) == y.astype(int)))

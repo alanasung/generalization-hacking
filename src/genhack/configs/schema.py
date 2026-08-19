@@ -121,6 +121,28 @@ class DataConfig:
     test_frac: float = 0.2
     shuffle: bool = True
     max_prompt_tokens: int = 512
+    # Domain corpus keys (see genhack.genhack.corpora). ``strategies`` are the
+    # shortcut mechanisms a training-strategy search is probed against;
+    # ``holdout_families`` are reserved from fitting for the family-level
+    # generalization split.
+    strategies: list[str] = field(
+        default_factory=lambda: [
+            "lexical_overlap",
+            "position_bias",
+            "length_heuristic",
+            "template_marker",
+            "surface_ngram",
+        ]
+    )
+    holdout_families: list[str] = field(
+        default_factory=lambda: [
+            "billing_disputes",
+            "lab_reports",
+            "vehicle_listings",
+            "escalation_queue",
+            "audit_trails",
+        ]
+    )
 
     def __post_init__(self) -> None:
         total = self.train_frac + self.val_frac + self.test_frac
@@ -159,9 +181,7 @@ class EvalConfig:
 
     def __post_init__(self) -> None:
         if not 0.0 < self.bootstrap_alpha < 1.0:
-            raise ValueError(
-                f"eval.bootstrap_alpha must be in (0, 1), got {self.bootstrap_alpha}"
-            )
+            raise ValueError(f"eval.bootstrap_alpha must be in (0, 1), got {self.bootstrap_alpha}")
         if self.bootstrap_samples < 100:
             raise ValueError(
                 f"eval.bootstrap_samples must be >= 100 for a usable interval, "
@@ -265,3 +285,5 @@ class Config:
     logging: LoggingConfig = field(default_factory=LoggingConfig)
     experiment: ExperimentConfig = field(default_factory=ExperimentConfig)
     run: RunConfig = field(default_factory=RunConfig)
+    # Measured ladder path by default when weights load; smoke sets this true.
+    force_synthetic: bool = False
